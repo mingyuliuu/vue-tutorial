@@ -1,19 +1,26 @@
 <template>
   <div class="container">
     <HeaderItem title="My Task Tracker" />
-    <TasksCollection @toggle-reminder="toggleReminder" @delete-task="deleteTask" :tasks="tasks" />
+    <AddTask @add-task="addTask" />
+    <TasksCollection
+      @toggle-reminder="toggleReminder"
+      @delete-task="deleteTask"
+      :tasks="tasks"
+    />
   </div>
 </template>
 
 <script>
 import HeaderItem from "./components/Header.vue";
 import TasksCollection from "./components/Tasks.vue";
+import AddTask from "./components/AddTask.vue";
 
 export default {
   name: "App",
   components: {
     HeaderItem,
     TasksCollection,
+    AddTask,
   },
   data() {
     return {
@@ -21,14 +28,19 @@ export default {
     };
   },
   methods: {
+    addTask(task) {
+      this.tasks = [...this.tasks, task];
+    },
     deleteTask(id) {
       if (confirm("Are you sure?")) {
         this.tasks = this.tasks.filter((task) => task.id != id);
       }
     },
     toggleReminder(id) {
-      this.tasks = this.tasks.map((task) => task.id === id ? { ...task, reminder: !task.reminder } : task)
-    }
+      this.tasks = this.tasks.map((task) =>
+        task.id === id ? { ...task, reminder: !task.reminder } : task
+      );
+    },
   },
   created() {
     this.tasks = [
