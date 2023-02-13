@@ -90,6 +90,11 @@ export default {
       cardList.value[payload.position].visible = true;
 
       if (userSelection.value[0]) {
+        if (
+          userSelection.value[0].position === payload.position &&
+          userSelection.value[0].faceValue === payload.faceValue
+        )
+          return;
         userSelection.value[1] = payload;
       } else {
         userSelection.value[0] = payload;
@@ -107,8 +112,10 @@ export default {
             cardList.value[cardOne.position].matched = true;
             cardList.value[cardTwo.position].matched = true;
           } else {
-            cardList.value[cardOne.position].visible = false;
-            cardList.value[cardTwo.position].visible = false;
+            setTimeout(() => {
+              cardList.value[cardOne.position].visible = false;
+              cardList.value[cardTwo.position].visible = false;
+            }, 1200);
           }
 
           userSelection.value.length = 0;
