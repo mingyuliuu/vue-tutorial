@@ -13,7 +13,9 @@
       />
     </section>
     <h2>{{ status }}</h2>
-    <button :on-click="restartGame">Restart Game</button>
+    <button :on-click="restartGame" class="button">
+      <img src="../public/images/restart.png" alt="Restart" /> Restart Game
+    </button>
   </div>
 </template>
 
@@ -62,7 +64,16 @@ export default {
       }));
     };
 
-    const cardItems = [1, 2, 3, 4, 5, 6, 7, 8];
+    const cardItems = [
+      "card-1",
+      "card-2",
+      "card-3",
+      "card-4",
+      "card-5",
+      "card-6",
+      "card-7",
+      "card-8",
+    ];
     cardItems.forEach((item) => {
       cardList.value.push({
         value: item,
@@ -136,21 +147,52 @@ export default {
 </script>
 
 <style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  margin-top: 0;
+  padding-top: 5vh;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  background-image: url("../public/images/page-bg.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  height: 100vh;
+}
+
+.button {
+  background-color: cadetblue;
+  color: white;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.button img {
+  padding-right: 5px;
+  height: 30px;
 }
 
 .game-board {
   display: grid;
-  grid-template-columns: 100px 100px 100px 100px;
-  grid-template-rows: 100px 100px 100px 100px;
-  grid-column-gap: 30px;
-  grid-row-gap: 30px;
+  grid-template-columns: repeat(4, 130px);
+  grid-template-rows: repeat(4, 100px);
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
   justify-content: center;
 }
 </style>
