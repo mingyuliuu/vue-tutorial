@@ -13,11 +13,13 @@
       />
     </section>
     <h2>{{ status }}</h2>
+    <button :on-click="restartGame">Restart Game</button>
   </div>
 </template>
 
 <script>
-import { ref, watch } from "vue";
+import _ from "lodash";
+import { computed, ref, watch } from "vue";
 import CardComponent from "./components/Card.vue";
 
 export default {
@@ -28,16 +30,61 @@ export default {
   setup() {
     const cardList = ref([]);
     const userSelection = ref([]);
-    const status = ref("");
 
-    for (let i = 0; i < 16; i++) {
-      cardList.value.push({
-        value: i,
+    const status = computed(() => {
+      if (remainingPairs.value === 0) {
+        return "Player wins!";
+      } else {
+        return `Remainging pairs: ${remainingPairs.value}`;
+      }
+    });
+
+    const remainingPairs = computed(() => {
+      const remainingCards = cardList.value.filter(
+        (card) => card.matched === false
+      ).length;
+
+      return remainingCards / 2;
+    });
+
+    const shuffleCards = () => {
+      cardList.value = _.shuffle(cardList.value);
+    };
+
+    const restartGame = () => {
+      shuffleCards();
+
+      cardList.value = cardList.value.map((card, index) => ({
+        ...card,
         visible: false,
-        position: i,
+        position: index,
+        matched: false,
+      }));
+    };
+
+    const cardItems = [1, 2, 3, 4, 5, 6, 7, 8];
+    cardItems.forEach((item) => {
+      cardList.value.push({
+        value: item,
+        visible: false,
+        position: null,
         matched: false,
       });
-    }
+
+      cardList.value.push({
+        value: item,
+        visible: false,
+        position: null,
+        matched: false,
+      });
+    });
+
+    cardList.value = cardList.value.map((card, index) => {
+      return {
+        ...card,
+        position: index,
+      };
+    });
 
     const flipCard = (payload) => {
       cardList.value[payload.position].visible = true;
@@ -57,13 +104,9 @@ export default {
           const cardTwo = currentValue[1];
 
           if (cardOne.faceValue === cardTwo.faceValue) {
-            status.value = "Matched!";
-
             cardList.value[cardOne.position].matched = true;
             cardList.value[cardTwo.position].matched = true;
           } else {
-            status.value = "Mismatch!";
-
             cardList.value[cardOne.position].visible = false;
             cardList.value[cardTwo.position].visible = false;
           }
@@ -79,6 +122,7 @@ export default {
       flipCard,
       userSelection,
       status,
+      restartGame,
     };
   },
 };
