@@ -1,13 +1,15 @@
 <template>
-  <div class="card" @click="selectCard">
-    <div v-if="visible" class="card-face is-front">
+  <div class="card" :class="flippedStyles" @click="selectCard">
+    <div class="card-face is-front">
       <img class="card-image" :src="`/images/${value}.png`" :alt="value" />
     </div>
-    <div v-else class="card-face is-back"></div>
+    <div class="card-face is-back"></div>
   </div>
 </template>
 
 <script>
+import { computed } from "vue";
+
 export default {
   name: "CardComponent",
   props: {
@@ -29,6 +31,12 @@ export default {
     },
   },
   setup(props, context) {
+    const flippedStyles = computed(() => {
+      if (props.visible) {
+        return "is-flipped";
+      }
+      return "";
+    });
     const selectCard = () => {
       context.emit("select-card", {
         position: props.position,
@@ -37,6 +45,7 @@ export default {
     };
 
     return {
+      flippedStyles,
       selectCard,
     };
   },
@@ -46,6 +55,12 @@ export default {
 <style scoped>
 .card {
   position: relative;
+  transition: 0.5s transform ease-in;
+  transform-style: preserve-3d;
+}
+
+.card.is-flipped {
+  transform: rotateY(180deg);
 }
 
 .card-face {
@@ -56,10 +71,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  backface-visibility: hidden;
 }
 
 .card-face.is-front {
   color: white;
+  transform: rotateY(180deg);
 }
 
 .card-face.is-back {
