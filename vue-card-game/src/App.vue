@@ -1,6 +1,9 @@
 <template>
   <div>
     <h1>Peek-a-Vue</h1>
+    <section class="description">
+      <p>Welcome to Peek-a-Vue -- a card matching game powered by Vue.js!</p>
+    </section>
     <transition-group tag="section" class="game-board" name="shuffle-card">
       <CardComponent
         v-for="card in cardList"
@@ -12,8 +15,11 @@
         @select-card="flipCard"
       />
     </transition-group>
-    <h2>{{ status }}</h2>
-    <button @click="restartGame" class="button">
+    <h3 class="status">{{ status }}</h3>
+    <button v-if="newPlayer" @click="startGame" class="button">
+      <img src="../public/images/play.png" alt="Start" /> Start Game
+    </button>
+    <button v-else @click="restartGame" class="button">
       <img src="../public/images/restart.png" alt="Restart" /> Restart Game
     </button>
   </div>
@@ -23,7 +29,7 @@
 import _ from "lodash";
 import { computed, ref, watch } from "vue";
 import CardComponent from "./components/Card.vue";
-import { launchConfetti } from './utilities/confetti'
+import { launchConfetti } from "./utilities/confetti";
 
 export default {
   name: "App",
@@ -33,10 +39,17 @@ export default {
   setup() {
     const cardList = ref([]);
     const userSelection = ref([]);
+    const newPlayer = ref(true);
+
+    const startGame = () => {
+      newPlayer.value = false;
+
+      restartGame();
+    };
 
     const status = computed(() => {
       if (remainingPairs.value === 0) {
-        return "Player wins!";
+        return "You win!";
       } else {
         return `Remaining pairs: ${remainingPairs.value}`;
       }
@@ -83,7 +96,7 @@ export default {
       cardList.value.push({
         value: item,
         variant: 2,
-        visible: false,
+        visible: true,
         position: null,
         matched: false,
       });
@@ -111,11 +124,11 @@ export default {
       }
     };
 
-    watch(remainingPairs, currentValue => {
+    watch(remainingPairs, (currentValue) => {
       if (currentValue === 0) {
-        launchConfetti()
+        launchConfetti();
       }
-    })
+    });
 
     watch(
       userSelection,
@@ -146,6 +159,8 @@ export default {
       userSelection,
       status,
       restartGame,
+      startGame,
+      newPlayer,
     };
   },
 };
@@ -159,8 +174,8 @@ body {
 }
 
 h1 {
-  margin-top: 0;
-  padding-top: 5vh;
+  padding-top: 4vh;
+  margin: 0;
 }
 
 #app {
@@ -175,16 +190,26 @@ h1 {
   height: 100vh;
 }
 
+.description {
+  font-family: "Titillium Web", sans-serif;
+}
+
+.description p {
+  margin-bottom: 20px;
+}
+
 .button {
   background-color: cadetblue;
   color: white;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
+  font-family: "Titillium Web", sans-serif;
   font-weight: bold;
-  border-radius: 5px;
+  border: none;
+  border-radius: 10px;
 }
 
 .button img {
@@ -192,10 +217,14 @@ h1 {
   height: 30px;
 }
 
+.status {
+  font-family: "Titillium Web", sans-serif;
+}
+
 .game-board {
   display: grid;
   grid-template-columns: repeat(4, 130px);
-  grid-template-rows: repeat(4, 100px);
+  grid-template-rows: repeat(4, 95px);
   grid-column-gap: 20px;
   grid-row-gap: 20px;
   justify-content: center;
